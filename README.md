@@ -71,7 +71,7 @@ yarn install
 
 # Start Chatting: Join or create chat rooms to begin communicating.
 
-## Contributing
+Contributing
 
 We welcome contributions to Atlas-Chat! Here's how you can help:
 
@@ -81,7 +81,7 @@ Make Changes: Develop your feature or fix bugs.
 
 Submit a Pull Request: Submit a pull request with a clear description of your changes.
 
-## License
+License
 
 Atlas-Chat is licensed under the MIT License.
 
