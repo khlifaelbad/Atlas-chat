@@ -8,6 +8,8 @@ import { defaultValues, validationSchema } from './formikConfig';
 import AOS from "aos";
 import "aos/dist/aos.css";
 import { useEffect } from "react";
+import { createUser } from "../../api/createUser";
+
 
 export const Signup = () => {
   useEffect(() => {
@@ -16,48 +18,18 @@ export const Signup = () => {
   const history = useHistory();
   const [serverError, setServerError] = useState('');
 
-  const signUp = ({ email, userName, password }, { setSubmitting }) => {
-    fb.auth
-      .createUserWithEmailAndPassword(email, password)
-      .then(res => {
-        if (res?.user?.uid) {
-          fetch('/api/createUser', {
-            method: 'POST',
-            body: JSON.stringify({
-              userName,
-              userId: res.user.uid,
-            }),
-            headers: {
-              'Content-Type': 'application/json',
-            },
-          }).then(() => {
-
-
-            fb.firestore
-              .collection('chatUsers')
-              .doc(res.user.uid)
-              .set({ userName, avatar: '' });
-
-              history.push("/chat");
-          });
-
-        } else {
-          setServerError(
-            "We're having trouble signing you up. Please try again.",
-          );
-        }
-      })
-      .catch(err => {
-        if (err.code === 'auth/email-already-in-use') {
-          setServerError('An account with this email already exists');
-        } else {
-          setServerError(
-            "We're having trouble signing you up. Please try again.",
-          );
-        }
-      })
-      .finally(() => setSubmitting(false));
-  };
+const signUp = ({ email, userName, password }, { setSubmitting }) => {
+createUser(userName, email, password)
+  .then(() => {
+    history.push('/chat');
+  })
+    .catch((err) => {
+      // Extract the error message (adjust based on your API's response structure)
+      const errorMessage = err?.error || err?.message || "Something went wrong :(";
+      setServerError(errorMessage); // Ensure it's a string
+    })
+    .finally(() => setSubmitting(false));
+};
 
   return (
     <div className="singup">

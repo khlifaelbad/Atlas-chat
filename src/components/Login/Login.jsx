@@ -1,13 +1,12 @@
-import { fb } from "service";
-import { useState } from "react";
-import { Form, Formik } from "formik";
+import { useState, useEffect } from "react";
+import { Formik, Form } from "formik";
 import { useHistory } from "react-router-dom";
 import { FormField } from "components/FormField/FormField";
 import { validationSchema, defaultValues } from "./formikConfig";
 import { NavBar } from "components/NavBar/NavBar";
 import AOS from "aos";
 import "aos/dist/aos.css";
-import { useEffect } from "react";
+import { loginUser } from "../../api/createUser";
 
 export const Login = () => {
   useEffect(() => {
@@ -17,25 +16,16 @@ export const Login = () => {
   const [serverError, setServerError] = useState("");
 
   const login = ({ email, password }, { setSubmitting }) => {
-    fb.auth
-      .signInWithEmailAndPassword(email, password)
-      .then((res) => {
-        if (!res.user) {
-          setServerError(
-            "We're having trouble logging you in. Please try again."
-          );
-        } else {
-          history.push("/chat");
-        }
+    loginUser(email, password)
+      .then(() => {
+        history.push("/chat");
       })
       .catch((err) => {
-        if (err.code === "auth/wrong-password") {
-          setServerError("Invalid credentials");
-        } else if (err.code === "auth/user-not-found") {
-          setServerError("No account for this email");
-        } else {
-          setServerError("Something went wrong :(");
-        }
+        const errorMessage =
+          err.response?.data?.error ||
+          err.message ||
+          "Something went wrong :(";
+        setServerError(errorMessage);
       })
       .finally(() => setSubmitting(false));
   };
@@ -69,7 +59,7 @@ export const Login = () => {
                   name="email"
                   label="Email"
                   type="email"
-                  placeholder="Enter your e-mail"
+                  placeholder="Enter your email"
                 />
                 <FormField
                   name="password"
