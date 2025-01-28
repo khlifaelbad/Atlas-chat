@@ -118,7 +118,7 @@ app.get("/api/users", (req, res) => {
   });
 });
 
-// Start the server
+// Start a server
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
